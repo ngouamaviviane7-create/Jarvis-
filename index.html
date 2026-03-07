@@ -507,8 +507,7 @@ function hideT(){if(tEl){tEl.remove();tEl=null}}
 </script>
 </body>
 </html>
-Une fois collé → "Valider les modifications" → attendez 2 minutes → rechargez JARVIS.
-Vous verrez un nouveau bouton "MAINS LIBRES" en haut — activez-le et JARVIS vous écoutera en permanence et répondra automatiquement ! 🎙️="fr">je" content="yes">
+! 🎙️="fr">je" content="yes">
 <title>J.A.R.V.I.S</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
@@ -648,15 +647,9 @@ async function online(text){showT();try{const res=await fetch('https://api.anthr
 function setupSR(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;recognition=new SR();recognition.lang='fr-FR';recognition.continuous=false;recognition.interimResults=true;recognition.onresult=e=>{const t=Array.from(e.results).map(r=>r[0].transcript).join('');document.getElementById('txtIn').value=t;if(e.results[e.results.length-1].isFinal){stopL();sendMsg()}};recognition.onend=()=>{if(isListening)stopL()};recognition.onerror=()=>stopL()}
 function toggleVoice(){if(isSpeaking){speechSynthesis.cancel();isSpeaking=false;orbIdle()}if(isListening)stopL();else startL()}
 function startL(){if(!recognition){document.getElementById('txtIn').focus();return}isListening=true;try{recognition.start()}catch(e){}document.getElementById('core').className='core listening';document.getElementById('core').textContent='🔴';document.getElementById('micBtn').textContent='⏹';document.getElementById('orbHint').textContent='EN ÉCOUTE...';document.getElementById('waveform').classList.add('active')}
-function stopL(){if(!isListening)return;isListening=false;try{recognition.stop()}catch(e){}orbIdle()}
-function orbIdle(){document.getElementById('core').className='core';document.getElementById('core').textContent='🎙️';document.getElementById('micBtn').textContent='🎙️';document.getElementById('orbHint').textContent='APPUYER POUR PARLER';document.getElementById('waveform').classList.remove('active')}
-function speak(text){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[*#`]/g,'').substring(0,300));u.lang='fr-FR';u.rate=1;u.pitch=0.85;const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith('fr'));if(v)u.voice=v;u.onstart=()=>{isSpeaking=true;document.getElementById('core').className='core speaking';document.getElementById('core').textContent='🔊';document.getElementById('waveform').classList.add('active')};u.onend=u.onerror=()=>{isSpeaking=false;orbIdle()};speechSynthesis.speak(u)}
-if(window.speechSynthesis){speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();speechSynthesis.getVoices()}
-function addMsg(role,text,src){const c=document.getElementById('chat'),d=document.createElement('div');d.className='msg '+role;d.innerHTML='<div class="msg-label">'+(role==='user'?'◦ VOUS':'◈ JARVIS'+(src?' · <span style="font-size:7px">'+src+'</span>':''))+'</div>'+text;c.appendChild(d);c.scrollTop=c.scrollHeight}
-function sys(t){const c=document.getElementById('chat'),d=document.createElement('div');d.className='msg system';d.textContent=t;c.appendChild(d);c.scrollTop=c.scrollHeight}
-let tEl=null;
-function showT(){const c=document.getElementById('chat');tEl=document.createElement('div');tEl.className='thinking';tEl.innerHTML='<span></span><span></span><span></span>';c.appendChild(tEl);c.scrollTop=c.scrollHeight}
-function hideT(){if(tEl){tEl.remove();tEl=null}}
-</script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#010815

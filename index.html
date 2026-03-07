@@ -288,6 +288,226 @@ function hideT(){if(tEl){tEl.remove();tEl=null}}
 </body>
 </html>
 Une fois collé → "Valider les modifications" → attendez 2 minutes → rechargez JARVIS.
+Vous verrez un nouveau bouton "MAINS LIBRES" en haut — activez-le et JARVIS vous écoutera en permanence et répondra automatiquement ! 🎙️.quick-cmds::-webkit-scrollbar{display:none}
+.qcmd{flex-shrink:0;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);color:rgba(0,212,255,0.7);padding:4px 10px;border-radius:2px;font-family:'Rajdhani',sans-serif;font-size:11px;cursor:pointer;white-space:nowrap}
+.input-row{display:flex;gap:8px;align-items:center}
+.txt-in{flex:1;background:rgba(0,18,45,0.9);border:1px solid rgba(0,212,255,0.18);color:#fff;padding:10px 13px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;border-radius:2px}
+.txt-in::placeholder{color:rgba(0,212,255,0.25)}
+.ibtn{background:transparent;border:1px solid rgba(0,212,255,0.3);color:var(--primary);padding:10px 13px;font-size:17px;cursor:pointer;border-radius:2px;min-width:42px;display:flex;align-items:center;justify-content:center}
+.ibtn.send{border-color:rgba(0,102,255,0.35);color:var(--secondary)}
+.setup{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:16px}
+.setup h2{font-family:'Orbitron',monospace;font-size:17px;letter-spacing:4px;text-align:center}
+.setup p{color:rgba(0,212,255,0.55);font-size:12.5px;text-align:center;line-height:1.7}
+.s-in{width:100%;max-width:380px;background:rgba(0,18,45,0.9);border:1px solid rgba(0,212,255,0.3);color:#fff;padding:11px 15px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;border-radius:2px}
+.s-btn{background:rgba(0,212,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:11px 30px;font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;cursor:pointer;border-radius:2px}
+.s-skip{font-size:11px;color:rgba(0,212,255,0.4);cursor:pointer;text-decoration:underline}
+.s-note{font-size:10px;color:rgba(0,212,255,0.3);text-align:center}
+.offline-banner{display:none;text-align:center;font-size:10px;letter-spacing:2px;color:rgba(255,68,68,0.7);padding:3px;background:rgba(255,68,68,0.07);border-bottom:1px solid rgba(255,68,68,0.15);position:relative;z-index:10}
+</style>
+</head>
+<body>
+<div class="setup" id="setup">
+  <div class="logo">J.A.R.V.I.S</div>
+  <h2>CONFIGURATION</h2>
+  <p>JARVIS fonctionne <strong style="color:var(--primary)">offline</strong> par défaut.<br>Pour l'IA complète, entrez votre clé API Anthropic.<br><br><span style="color:rgba(0,212,255,0.4);font-size:11px">Obtenir une clé sur console.anthropic.com</span></p>
+  <input class="s-in" id="keyIn" type="password" placeholder="sk-ant-... (optionnel)">
+  <button class="s-btn" onclick="startJarvis()">▶ DÉMARRER</button>
+  <span class="s-skip" onclick="startJarvis()">Continuer sans clé (mode offline)</span>
+  <p class="s-note">Clé stockée localement · Jamais transmise</p>
+</div>
+<div class="offline-banner" id="offlineBanner">⚠ HORS LIGNE — MODE LOCAL ACTIF</div>
+<div class="header">
+  <div><div class="logo">J.A.R.V.I.S</div><div class="subtitle">ASSISTANT PERSONNEL HYBRIDE</div></div>
+  <div class="mode-badge">
+    <div class="mode-pill offline" id="modePill"><div class="mode-dot"></div><span id="modeText">OFFLINE</span></div>
+    <div class="model-label" id="modelLabel">MOTEUR LOCAL</div>
+  </div>
+</div>
+<div class="handsfree-bar">
+  <span class="hf-label">🎙️ MAINS LIBRES</span>
+  <label class="toggle">
+    <input type="checkbox" id="hfToggle" onchange="toggleHandsfree()">
+    <span class="slider"></span>
+  </label>
+  <span class="hf-status" id="hfStatus">DÉSACTIVÉ</span>
+</div>
+<div class="orb-section">
+  <div class="orb-wrap" onclick="toggleVoice()">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="core" id="core">🎙️</div>
+  </div>
+  <div class="waveform" id="waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
+  <div class="orb-hint" id="orbHint">APPUYER POUR PARLER</div>
+</div>
+<div class="chat-area" id="chat">
+  <div class="msg bot"><div class="msg-label">◈ JARVIS</div>Systèmes initialisés. Activez le mode mains libres pour que je vous écoute en permanence !</div>
+</div>
+<div class="input-zone">
+  <div class="quick-cmds">
+    <div class="qcmd" onclick="quickSend('Quelle heure est-il ?')">⏰ Heure</div>
+    <div class="qcmd" onclick="quickSend('Fais un calcul')">🔢 Calcul</div>
+    <div class="qcmd" onclick="quickSend('Aide-moi à rédiger')">✍️ Rédiger</div>
+    <div class="qcmd" onclick="quickSend('Explique-moi')">💡 Expliquer</div>
+    <div class="qcmd" onclick="quickSend('Traduis ce texte')">🌍 Traduire</div>
+  </div>
+  <div class="input-row">
+    <input class="txt-in" id="txtIn" placeholder="Parlez ou écrivez..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="ibtn send" onclick="sendMsg()">➤</button>
+    <button class="ibtn" onclick="toggleVoice()" id="micBtn">🎙️</button>
+  </div>
+</div>
+<script>
+let apiKey='',isOnline=navigator.onLine,isListening=false,isSpeaking=false,recognition=null,history=[],handsfreeMode=false,handsfreeTimer=null;
+const KB={time:['heure','date','jour','aujourd'],calc:['+','-','*','/','calculer','combien','calcule'],joke:['blague','drôle','rigolo'],greetings:['bonjour','salut','hello','bonsoir'],thanks:['merci','super','parfait'],farewells:['au revoir','bye','bonne nuit'],help:['aide','que peux-tu','capacités']};
+const jokes=["Pourquoi les plongeurs plongent en arrière ? Parce que sinon ils tomberaient dans le bateau !","Comment appelle-t-on un chat tombé dans un pot de peinture ? Un chat-peint !","Un homme entre dans une bibliothèque : un livre sur le paradoxe SVP. La bibliothécaire : il est là mais pas là.","Qu'est-ce qu'un crocodile qui surveille les autres crocodiles ? Un surveil-lard !"];
+window.addEventListener('load',()=>{const s=sessionStorage.getItem('j_key');if(s!==null){apiKey=s;boot()}});
+window.addEventListener('online',()=>{isOnline=true;updateMode();sys('📡 Connexion — Claude IA activé')});
+window.addEventListener('offline',()=>{isOnline=false;updateMode();sys('📴 Hors ligne — Mode local actif')});
+function startJarvis(){const k=document.getElementById('keyIn').value.trim();apiKey=k.startsWith('sk-ant-')?k:'';sessionStorage.setItem('j_key',apiKey);boot()}
+function boot(){document.getElementById('setup').style.display='none';updateMode();setupSR();setTimeout(()=>speak('JARVIS en ligne. Activez le mode mains libres pour que je vous écoute en permanence !'),600)}
+function updateMode(){const p=document.getElementById('modePill'),t=document.getElementById('modeText'),l=document.getElementById('modelLabel'),b=document.getElementById('offlineBanner');p.className='mode-pill';if(!isOnline){p.classList.add('offline');t.textContent='OFFLINE';l.textContent='MOTEUR LOCAL';b.style.display='block'}else if(apiKey){p.classList.add('online');t.textContent='EN LIGNE';l.textContent='CLAUDE SONNET';b.style.display='none'}else{p.classList.add('hybrid');t.textContent='EN LIGNE';l.textContent='MODE LOCAL';b.style.display='none'}}
+
+// ── MAINS LIBRES ──
+function toggleHandsfree(){
+  handsfreeMode=document.getElementById('hfToggle').checked;
+  const status=document.getElementById('hfStatus');
+  if(handsfreeMode){
+    status.textContent='ACTIF';
+    status.style.color='var(--online)';
+    document.getElementById('orbHint').textContent='EN ÉCOUTE PERMANENTE...';
+    sys('🎙️ Mode mains libres activé — parlez librement !');
+    speak('Mode mains libres activé. Je vous écoute en permanence.');
+    setTimeout(()=>startHandsfree(),2000);
+  } else {
+    status.textContent='DÉSACTIVÉ';
+    status.style.color='rgba(0,212,255,0.4)';
+    document.getElementById('orbHint').textContent='APPUYER POUR PARLER';
+    stopL();
+    sys('Mode mains libres désactivé.');
+  }
+}
+
+function startHandsfree(){
+  if(!handsfreeMode||isSpeaking)return;
+  if(!isListening)startL(true);
+}
+
+async function sendMsg(){const i=document.getElementById('txtIn'),text=i.value.trim();if(!text)return;i.value='';addMsg('user',text);history.push({role:'user',content:text});isOnline&&apiKey?await online(text):offline(text)}
+function quickSend(t){document.getElementById('txtIn').value=t;sendMsg()}
+
+function offline(text){
+  const t=text.toLowerCase();let r='';
+  if(KB.time.some(w=>t.includes(w))){const n=new Date(),H=n.getHours().toString().padStart(2,'0'),M=n.getMinutes().toString().padStart(2,'0'),days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],months=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];r=`Il est ${H}h${M}. ${days[n.getDay()]} ${n.getDate()} ${months[n.getMonth()]} ${n.getFullYear()}.`}
+  else if(KB.calc.some(w=>t.includes(w))){try{const e=text.replace(/[^0-9+\-*\/().]/g,'').trim();r=e?`Résultat : ${e} = ${Function('"use strict";return('+e+')')()}`:"Donnez-moi un calcul, ex: 25 fois 4"}catch{r="Écrivez le calcul sous forme mathématique."}}
+  else if(KB.joke.some(w=>t.includes(w))){r=jokes[Math.floor(Math.random()*jokes.length)]}
+  else if(KB.greetings.some(w=>t.includes(w))){const h=new Date().getHours();r=(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+' ! Prêt à vous assister.'}
+  else if(KB.thanks.some(w=>t.includes(w))){r="Avec plaisir !"}
+  else if(KB.farewells.some(w=>t.includes(w))){r="À bientôt ! JARVIS reste en veille."}
+  else if(KB.help.some(w=>t.includes(w))){r="En offline : heure, calculs, blagues. Connectez-vous pour l'IA Claude complète !"}
+  else{r="Je suis hors ligne — capacités limitées. Reconnectez-vous pour l'IA complète."}
+  showT();setTimeout(()=>{hideT();addMsg('bot',r,'LOCAL');history.push({role:'assistant',content:r});speak(r)},400)
+}
+
+async function online(text){showT();try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:"Tu es JARVIS, assistant IA personnel. Réponds toujours en français, de façon concise (max 3-4 phrases). Tu aides avec tout.",messages:history.slice(-10)})});const d=await res.json();hideT();if(d.error){addMsg('bot','Erreur: '+d.error.message,'ERR');return}const r=d.content[0].text;history.push({role:'assistant',content:r});addMsg('bot',r,'CLAUDE IA');speak(r)}catch(e){hideT();addMsg('bot','Erreur connexion.','ERR');offline(text)}}
+
+function setupSR(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return;
+  recognition=new SR();
+  recognition.lang='fr-FR';
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.onresult=e=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    document.getElementById('txtIn').value=t;
+    if(e.results[e.results.length-1].isFinal){
+      stopL();
+      if(t.trim()){sendMsg()}
+      else if(handsfreeMode){setTimeout(()=>startHandsfree(),500)}
+    }
+  };
+  recognition.onend=()=>{
+    isListening=false;
+    if(handsfreeMode&&!isSpeaking){
+      // Relance auto après 1 seconde
+      setTimeout(()=>startHandsfree(),1000);
+    } else {
+      orbIdle();
+    }
+  };
+  recognition.onerror=(e)=>{
+    if(e.error!=='no-speech')stopL();
+    if(handsfreeMode&&!isSpeaking)setTimeout(()=>startHandsfree(),1500);
+  };
+}
+
+function toggleVoice(){if(isSpeaking){speechSynthesis.cancel();isSpeaking=false;orbIdle()}if(isListening)stopL();else startL(false)}
+function startL(auto=false){
+  if(!recognition){document.getElementById('txtIn').focus();return}
+  if(isListening)return;
+  isListening=true;
+  try{recognition.start()}catch(e){}
+  document.getElementById('core').className='core listening';
+  document.getElementById('core').textContent='🔴';
+  document.getElementById('micBtn').textContent='⏹';
+  if(!auto)document.getElementById('orbHint').textContent='EN ÉCOUTE...';
+  document.getElementById('waveform').classList.add('active');
+}
+function stopL(){
+  if(!isListening)return;
+  isListening=false;
+  try{recognition.stop()}catch(e){}
+  if(!handsfreeMode)orbIdle();
+}
+function orbIdle(){
+  document.getElementById('core').className='core';
+  document.getElementById('core').textContent='🎙️';
+  document.getElementById('micBtn').textContent='🎙️';
+  document.getElementById('orbHint').textContent=handsfreeMode?'EN ÉCOUTE PERMANENTE...':'APPUYER POUR PARLER';
+  document.getElementById('waveform').classList.remove('active');
+}
+
+function speak(text){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const clean=text.replace(/[*#`]/g,'').substring(0,300);
+  const u=new SpeechSynthesisUtterance(clean);
+  u.lang='fr-FR';u.rate=1;u.pitch=0.85;u.volume=1;
+
+  // Cherche la meilleure voix française locale
+  const voices=speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang==='fr-FR'&&v.localService)
+    ||voices.find(v=>v.lang.startsWith('fr')&&v.localService)
+    ||voices.find(v=>v.lang.startsWith('fr'))
+    ||null;
+  if(v)u.voice=v;
+
+  u.onstart=()=>{
+    isSpeaking=true;
+    document.getElementById('core').className='core speaking';
+    document.getElementById('core').textContent='🔊';
+    document.getElementById('waveform').classList.add('active');
+    if(isListening){try{recognition.stop()}catch(e){}}
+  };
+  u.onend=u.onerror=()=>{
+    isSpeaking=false;
+    orbIdle();
+    // Reprend l'écoute auto après avoir parlé
+    if(handsfreeMode)setTimeout(()=>startHandsfree(),800);
+  };
+  speechSynthesis.speak(u);
+}
+
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();speechSynthesis.getVoices()}
+function addMsg(role,text,src){const c=document.getElementById('chat'),d=document.createElement('div');d.className='msg '+role;d.innerHTML='<div class="msg-label">'+(role==='user'?'◦ VOUS':'◈ JARVIS'+(src?' · <span style="font-size:7px">'+src+'</span>':''))+'</div>'+text;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function sys(t){const c=document.getElementById('chat'),d=document.createElement('div');d.className='msg system';d.textContent=t;c.appendChild(d);c.scrollTop=c.scrollHeight}
+let tEl=null;
+function showT(){const c=document.getElementById('chat');tEl=document.createElement('div');tEl.className='thinking';tEl.innerHTML='<span></span><span></span><span></span>';c.appendChild(tEl);c.scrollTop=c.scrollHeight}
+function hideT(){if(tEl){tEl.remove();tEl=null}}
+</script>
+</body>
+</html>
+Une fois collé → "Valider les modifications" → attendez 2 minutes → rechargez JARVIS.
 Vous verrez un nouveau bouton "MAINS LIBRES" en haut — activez-le et JARVIS vous écoutera en permanence et répondra automatiquement ! 🎙️="fr">je" content="yes">
 <title>J.A.R.V.I.S</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
